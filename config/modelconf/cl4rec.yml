@@ -1,0 +1,75 @@
+optimizer:
+  name: adam
+  lr: 5.0e-3
+  final_lr: 1.0e-6
+  weight_decay: 0
+  gamma: 0.9995
+
+experiment:
+  model_test_run: false
+  experiment_name: focalloss witout grad acc
+  standard_test: True
+  test_run_sample_no: 100
+  save_model: true
+  reproducible: true
+  seed: 12
+  tensorboard: true
+  pretrain: false
+  pretrain_path: cl4rec-featengg-2024-04-26_19-26 focalloss witout grad acc.pth
+
+train:
+  weighted_loss_fn: true
+  epoch: 5000
+  scheduler: true
+  batch_size: 256
+  ssl: false
+  min_time_reorder: 0.5
+  gradient_accumulation: false
+  accumulation_steps: 10
+  test_step: 10
+  train_checkpoints: true
+  log_loss: true
+  save_step: 100
+  focal_loss: true
+  focal_loss_gamma: 4
+
+test:
+  metrics: [precision, recall, f1score, accuracy]
+  k: [1, 2, 3]
+  batch_size: 1024
+  train_eval: true
+  log_loss: true
+
+data:
+  type: sequential
+  name: featengg
+  seq_aug: false
+  dynamic_context_window_length: 30
+
+model:
+  name: cl4rec
+  context_encoder: tempcnn
+  encoder_combine: concat
+  tcn_num_channels: [80, 50, 25]
+  tcn_kernel_size: 3
+  dropout_rate_tcn: 0.1
+  dropout_rate_fc_tcn: 0.4
+  dropout_rate_sasrec: 0.3
+  dropout_rate_fc_sasrec: 0.4
+  dropout_rate_fc_concat: 0.4
+  dropout_rate_fc_static: 0.1
+  sasrec_n_layers: 2
+  item_embedding_size: 64
+  sasrec_n_heads: 2
+  sasrec_max_seq_len: 10
+  cl_lmd: 0.1
+  cl_tau: 1
+  lstm_hidden_size: 512
+  lstm_num_layers: 2
+
+tune:
+  enable: false
+  hyperparameters: [dropout_rate_sasrec, cl_lmd, cl_tau]
+  dropout_rate: [0.1, 0.2, 0.3]
+  lmd: [0.05, 0.1, 0.2]
+  tau: [0.5, 0.7, 0.9]
